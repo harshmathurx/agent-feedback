@@ -2,6 +2,7 @@ import type { Annotation, ToolbarSettings, AnnotationMode } from '../types';
 import { DEFAULT_SETTINGS } from '../types';
 import { saveAnnotations, loadAnnotations, saveSettings, loadSettings } from '../utils/storage';
 import { generateOutput } from '../utils/output-generator';
+import { Annotator } from './annotator';
 
 export class Toolbar {
   private container: HTMLDivElement;
@@ -15,6 +16,10 @@ export class Toolbar {
   // UI elements
   private toolbarElement: HTMLDivElement | null = null;
   private toggleButton: HTMLDivElement | null = null;
+
+  // Annotator
+  private annotator: Annotator | null = null;
+  private clickHandler: ((e: MouseEvent) => void) | null = null;
 
   constructor(container: HTMLDivElement) {
     this.container = container;
@@ -35,6 +40,17 @@ export class Toolbar {
 
     // Load annotations for current page
     this.annotations = await loadAnnotations(window.location.pathname);
+
+    // Create annotator
+    this.annotator = new Annotator(
+      this.annotations,
+      this.settings.annotationColor,
+      (annotations) => {
+        this.annotations = annotations;
+        saveAnnotations(window.location.pathname, annotations);
+        this.updateAnnotationCount();
+      }
+    );
 
     // Create toggle button
     this.createToggleButton();
@@ -68,6 +84,7 @@ export class Toolbar {
       this.toggleButton.style.display = 'none';
     }
     this.createToolbar();
+    this.enableClickMode();
   }
 
   public deactivate(): void {
@@ -78,6 +95,11 @@ export class Toolbar {
     }
     if (this.toggleButton) {
       this.toggleButton.style.display = 'block';
+    }
+
+    if (this.clickHandler) {
+      document.removeEventListener('click', this.clickHandler, true);
+      this.clickHandler = null;
     }
   }
 
@@ -291,6 +313,7 @@ export class Toolbar {
   private setAnnotationColor(color: string): void {
     this.settings.annotationColor = color;
     saveSettings(this.settings);
+    this.annotator?.updateColor(color);
 
     // Update button states
     this.toolbarElement?.querySelectorAll('.color-option').forEach(btn => {
@@ -299,10 +322,8 @@ export class Toolbar {
   }
 
   private clearAll(): void {
-    this.annotations = [];
-    saveAnnotations(window.location.pathname, this.annotations);
+    this.annotator?.clearAll();
     this.updateAnnotationCount();
-    // TODO: Remove annotation markers from page
   }
 
   private async copyToClipboard(): Promise<void> {
@@ -325,6 +346,41 @@ export class Toolbar {
     if (countEl) {
       countEl.textContent = String(this.annotations.length);
     }
+  }
+
+  private enableClickMode(): void {
+    if (this.clickHandler) {
+      document.removeEventListener('click', this.clickHandler);
+    }
+
+    this.clickHandler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+
+      // Ignore clicks on toolbar and markers
+      if (
+        target.closest('.agentation-toolbar') ||
+        target.closest('.agentation-marker') ||
+        target.closest('#agent-feedback-host')
+      ) {
+        return;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (this.currentMode === 'click') {
+        this.handleClickAnnotation(target);
+      }
+    };
+
+    document.addEventListener('click', this.clickHandler, true);
+  }
+
+  private handleClickAnnotation(element: HTMLElement): void {
+    const comment = prompt('Add your feedback:');
+    if (!comment) return;
+
+    this.annotator?.createAnnotation(element, comment);
   }
 
   public destroy(): void {
