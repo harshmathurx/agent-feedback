@@ -87,10 +87,10 @@ export class Toolbar {
     });
 
     this.toggleButton.innerHTML = `
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2"/>
-        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"/>
-        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"/>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: block;">
+        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" stroke-width="2"/>
+        <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2"/>
+        <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2"/>
       </svg>
     `;
 
@@ -183,61 +183,61 @@ export class Toolbar {
 
     this.toolbarElement.innerHTML = `
       <div class="toolbar-header" style="display: flex; align-items: center; gap: 0.375rem; width: 100%;">
-        <div class="toolbar-logo" style="display: flex; align-items: center; justify-content: center; color: currentColor;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2"/>
-            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"/>
-            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"/>
+        <div class="toolbar-logo" style="display: flex; align-items: center; justify-content: center; color: ${this.isDarkMode ? 'white' : 'black'};">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="display: block;">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="${this.isDarkMode ? 'white' : 'black'}" stroke-width="2"/>
+            <path d="M2 17L12 22L22 17" stroke="${this.isDarkMode ? 'white' : 'black'}" stroke-width="2"/>
+            <path d="M2 12L12 17L22 12" stroke="${this.isDarkMode ? 'white' : 'black'}" stroke-width="2"/>
           </svg>
         </div>
 
         <div class="toolbar-modes" style="display: flex; align-items: center; gap: 0.375rem;">
           <button class="mode-button active" data-mode="click" title="Click to annotate" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: rgba(60, 130, 247, 0.25); color: #3c82f7;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M12 2L2 12L12 22L22 12L12 2Z" stroke="currentColor" stroke-width="2"/>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
+              <path d="M12 2L2 12L12 22L22 12L12 2Z" stroke="#3c82f7" stroke-width="2"/>
             </svg>
           </button>
-          <button class="mode-button" data-mode="text" title="Select text" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: rgba(255, 255, 255, 0.85);">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M4 7V4H20V7" stroke="currentColor" stroke-width="2"/>
-              <path d="M12 4V20" stroke="currentColor" stroke-width="2"/>
-              <path d="M9 20H15" stroke="currentColor" stroke-width="2"/>
+          <button class="mode-button" data-mode="text" title="Select text" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: ${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'};">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
+              <path d="M4 7V4H20V7" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
+              <path d="M12 4V20" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
+              <path d="M9 20H15" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
             </svg>
           </button>
-          <button class="mode-button" data-mode="multiselect" title="Multi-select" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: rgba(255, 255, 255, 0.85);">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <rect x="3" y="3" width="8" height="8" stroke="currentColor" stroke-width="2"/>
-              <rect x="13" y="13" width="8" height="8" stroke="currentColor" stroke-width="2"/>
+          <button class="mode-button" data-mode="multiselect" title="Multi-select" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: ${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'};">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
+              <rect x="3" y="3" width="8" height="8" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
+              <rect x="13" y="13" width="8" height="8" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
             </svg>
           </button>
-          <button class="mode-button" data-mode="area" title="Select area" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: rgba(255, 255, 255, 0.85);">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <rect x="3" y="3" width="18" height="18" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+          <button class="mode-button" data-mode="area" title="Select area" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: ${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'};">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
+              <rect x="3" y="3" width="18" height="18" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2" stroke-dasharray="4 4"/>
             </svg>
           </button>
         </div>
 
         <div class="toolbar-actions" style="display: flex; align-items: center; gap: 0.375rem;">
-          <button class="action-button" id="clear-btn" title="Clear all" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: rgba(255, 255, 255, 0.85); transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M3 6h18M8 6V4h8v2M10 11v6M14 11v6" stroke="currentColor" stroke-width="2"/>
+          <button class="action-button" id="clear-btn" title="Clear all" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: ${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}; transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
+              <path d="M3 6h18M8 6V4h8v2M10 11v6M14 11v6" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
             </svg>
           </button>
-          <button class="action-button" id="copy-btn" title="Copy feedback" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: rgba(255, 255, 255, 0.85); transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <rect x="9" y="9" width="13" height="13" stroke="currentColor" stroke-width="2"/>
-              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2"/>
+          <button class="action-button" id="copy-btn" title="Copy feedback" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: ${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}; transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
+              <rect x="9" y="9" width="13" height="13" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
+              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
             </svg>
           </button>
-          <button class="action-button" id="settings-btn" title="Settings" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: rgba(255, 255, 255, 0.85); transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-              <path d="M12 1v6m0 6v6M23 12h-6m-6 0H1" stroke="currentColor" stroke-width="2"/>
+          <button class="action-button" id="settings-btn" title="Settings" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: ${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}; transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
+              <circle cx="12" cy="12" r="3" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
+              <path d="M12 1v6m0 6v6M23 12h-6m-6 0H1" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
             </svg>
           </button>
-          <button class="action-button" id="close-btn" title="Close" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: rgba(255, 255, 255, 0.85); transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"/>
+          <button class="action-button" id="close-btn" title="Close" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: ${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}; transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
+              <path d="M18 6L6 18M6 6l12 12" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
             </svg>
           </button>
         </div>
