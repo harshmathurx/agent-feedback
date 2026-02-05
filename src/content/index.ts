@@ -24,6 +24,7 @@ function injectMarkerStyles() {
       z-index: 999999;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       animation: markerBounce 0.3s ease-out;
+      overflow: visible !important;
     }
 
     .agentation-marker:hover .marker-delete {
@@ -31,8 +32,8 @@ function injectMarkerStyles() {
     }
 
     .agentation-marker:hover .marker-tooltip {
-      opacity: 1;
-      visibility: visible;
+      opacity: 1 !important;
+      visibility: visible !important;
     }
 
     .marker-delete {
@@ -57,26 +58,28 @@ function injectMarkerStyles() {
     }
 
     .marker-tooltip {
-      position: absolute;
-      bottom: calc(100% + 10px);
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1a1a1a;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 400;
-      white-space: nowrap;
-      max-width: 200px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.2s, visibility 0.2s;
-      pointer-events: none;
-      z-index: 1000000;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      position: absolute !important;
+      bottom: calc(100% + 10px) !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      background: #1a1a1a !important;
+      color: white !important;
+      padding: 8px 12px !important;
+      border-radius: 8px !important;
+      font-size: 13px !important;
+      font-weight: 400 !important;
+      font-family: system-ui, -apple-system, sans-serif !important;
+      white-space: nowrap !important;
+      max-width: 200px !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      transition: opacity 0.2s, visibility 0.2s !important;
+      pointer-events: none !important;
+      z-index: 1000000 !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+      display: block !important;
     }
 
     .marker-tooltip::after {
