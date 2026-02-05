@@ -104,6 +104,12 @@ export class Annotator {
     });
     marker.appendChild(deleteBtn);
 
+    // Add tooltip with comment
+    const tooltip = document.createElement('div');
+    tooltip.className = 'marker-tooltip';
+    tooltip.textContent = annotation.comment;
+    marker.appendChild(tooltip);
+
     document.body.appendChild(marker);
   }
 

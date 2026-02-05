@@ -30,6 +30,11 @@ function injectMarkerStyles() {
       opacity: 1;
     }
 
+    .agentation-marker:hover .marker-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
     .marker-delete {
       position: absolute;
       top: -8px;
@@ -49,6 +54,39 @@ function injectMarkerStyles() {
 
     .marker-delete:hover {
       background: #d32f2f;
+    }
+
+    .marker-tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a1a;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 400;
+      white-space: nowrap;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+      pointer-events: none;
+      z-index: 1000000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .marker-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: #1a1a1a;
     }
 
     @keyframes markerBounce {

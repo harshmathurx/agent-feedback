@@ -59,6 +59,26 @@ export class Toolbar {
   private createToggleButton(): void {
     this.toggleButton = document.createElement('div');
     this.toggleButton.className = 'agentation-toggle-button';
+
+    // Add inline styles as fallback
+    Object.assign(this.toggleButton.style, {
+      position: 'fixed',
+      bottom: '1.25rem',
+      right: '1.25rem',
+      width: '44px',
+      height: '44px',
+      borderRadius: '50%',
+      background: '#1a1a1a',
+      color: 'white',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'pointer',
+      zIndex: '100000',
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1)',
+      transition: 'transform 0.2s ease, background 0.2s ease'
+    });
+
     this.toggleButton.innerHTML = `
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
         <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2"/>
@@ -66,7 +86,17 @@ export class Toolbar {
         <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"/>
       </svg>
     `;
+
     this.toggleButton.addEventListener('click', () => this.toggle());
+    this.toggleButton.addEventListener('mouseenter', () => {
+      this.toggleButton!.style.background = '#2a2a2a';
+      this.toggleButton!.style.transform = 'scale(1.05)';
+    });
+    this.toggleButton.addEventListener('mouseleave', () => {
+      this.toggleButton!.style.background = '#1a1a1a';
+      this.toggleButton!.style.transform = 'scale(1)';
+    });
+
     this.container.appendChild(this.toggleButton);
   }
 
