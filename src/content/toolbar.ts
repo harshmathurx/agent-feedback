@@ -14,6 +14,8 @@ export class Toolbar {
   private currentMode: AnnotationMode = 'click';
   private isDarkMode: boolean = false;
   private showSettings: boolean = false;
+  private justCopied: boolean = false;
+  private justCleared: boolean = false;
 
   // UI elements
   private toolbarElement: HTMLDivElement | null = null;
@@ -191,31 +193,6 @@ export class Toolbar {
           </svg>
         </div>
 
-        <div class="toolbar-modes" style="display: flex; align-items: center; gap: 0.375rem;">
-          <button class="mode-button active" data-mode="click" title="Click to annotate" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: rgba(60, 130, 247, 0.25); color: #3c82f7;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
-              <path d="M12 2L2 12L12 22L22 12L12 2Z" stroke="#3c82f7" stroke-width="2"/>
-            </svg>
-          </button>
-          <button class="mode-button" data-mode="text" title="Select text" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: ${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'};">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
-              <path d="M4 7V4H20V7" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
-              <path d="M12 4V20" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
-              <path d="M9 20H15" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
-            </svg>
-          </button>
-          <button class="mode-button" data-mode="multiselect" title="Multi-select" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: ${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'};">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
-              <rect x="3" y="3" width="8" height="8" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
-              <rect x="13" y="13" width="8" height="8" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
-            </svg>
-          </button>
-          <button class="mode-button" data-mode="area" title="Select area" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: ${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'};">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
-              <rect x="3" y="3" width="18" height="18" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2" stroke-dasharray="4 4"/>
-            </svg>
-          </button>
-        </div>
 
         <div class="toolbar-actions" style="display: flex; align-items: center; gap: 0.375rem;">
           <button class="action-button" id="clear-btn" title="Clear all" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent; color: ${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}; transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;">
@@ -399,22 +376,84 @@ export class Toolbar {
   }
 
   private clearAll(): void {
+    if (this.annotations.length === 0) return;
+
     this.annotator?.clearAll();
     this.updateAnnotationCount();
+
+    // Show cleared feedback
+    this.justCleared = true;
+    this.updateClearButton();
+    setTimeout(() => {
+      this.justCleared = false;
+      this.updateClearButton();
+    }, 2000);
   }
 
   private async copyToClipboard(): Promise<void> {
+    if (this.annotations.length === 0) return;
+
     const output = generateOutput(this.annotations, window.location.pathname, this.settings.outputDetail);
 
     try {
       await navigator.clipboard.writeText(output);
-      // TODO: Show success feedback
+
+      // Show success feedback
+      this.justCopied = true;
+      this.updateCopyButton();
+      setTimeout(() => {
+        this.justCopied = false;
+        this.updateCopyButton();
+      }, 2000);
 
       if (this.settings.autoClearAfterCopy) {
         setTimeout(() => this.clearAll(), 500);
       }
     } catch (err) {
       console.error('Failed to copy:', err);
+    }
+  }
+
+  private updateCopyButton(): void {
+    const copyBtn = this.toolbarElement?.querySelector('#copy-btn');
+    if (!copyBtn) return;
+
+    if (this.justCopied) {
+      copyBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
+          <path d="M5 13l4 4L19 7" stroke="#34C759" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      `;
+      (copyBtn as HTMLElement).style.color = '#34C759';
+    } else {
+      copyBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
+          <rect x="9" y="9" width="13" height="13" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
+          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
+        </svg>
+      `;
+      (copyBtn as HTMLElement).style.color = this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)';
+    }
+  }
+
+  private updateClearButton(): void {
+    const clearBtn = this.toolbarElement?.querySelector('#clear-btn');
+    if (!clearBtn) return;
+
+    if (this.justCleared) {
+      clearBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
+          <path d="M5 13l4 4L19 7" stroke="#34C759" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      `;
+      (clearBtn as HTMLElement).style.color = '#34C759';
+    } else {
+      clearBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
+          <path d="M3 6h18M8 6V4h8v2M10 11v6M14 11v6" stroke="${this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)'}" stroke-width="2"/>
+        </svg>
+      `;
+      (clearBtn as HTMLElement).style.color = this.isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.5)';
     }
   }
 
