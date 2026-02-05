@@ -3,6 +3,8 @@ import { DEFAULT_SETTINGS } from '../types';
 import { saveAnnotations, loadAnnotations, saveSettings, loadSettings } from '../utils/storage';
 import { generateOutput } from '../utils/output-generator';
 import { Annotator } from './annotator';
+import { AnnotationPopup } from './annotation-popup';
+import { identifyElement } from '../utils/element-identification';
 
 export class Toolbar {
   private container: HTMLDivElement;
@@ -20,6 +22,11 @@ export class Toolbar {
   // Annotator
   private annotator: Annotator | null = null;
   private clickHandler: ((e: MouseEvent) => void) | null = null;
+  private mouseMoveHandler: ((e: MouseEvent) => void) | null = null;
+
+  // Hover highlight
+  private hoverHighlight: HTMLDivElement | null = null;
+  private currentPopup: AnnotationPopup | null = null;
 
   constructor(container: HTMLDivElement) {
     this.container = container;
@@ -115,6 +122,8 @@ export class Toolbar {
     }
     this.createToolbar();
     this.enableClickMode();
+    this.injectCursorStyles();
+    this.enableHoverHighlight();
   }
 
   public deactivate(): void {
@@ -131,6 +140,23 @@ export class Toolbar {
       document.removeEventListener('click', this.clickHandler, true);
       this.clickHandler = null;
     }
+
+    if (this.mouseMoveHandler) {
+      document.removeEventListener('mousemove', this.mouseMoveHandler);
+      this.mouseMoveHandler = null;
+    }
+
+    if (this.hoverHighlight) {
+      this.hoverHighlight.remove();
+      this.hoverHighlight = null;
+    }
+
+    if (this.currentPopup) {
+      this.currentPopup.destroy();
+      this.currentPopup = null;
+    }
+
+    this.removeCursorStyles();
   }
 
   private createToolbar(): void {
@@ -427,11 +453,138 @@ export class Toolbar {
     document.addEventListener('click', this.clickHandler, true);
   }
 
-  private handleClickAnnotation(element: HTMLElement): void {
-    const comment = prompt('Add your feedback:');
-    if (!comment) return;
+  private handleClickAnnotation(target: HTMLElement): void {
+    // Hide hover highlight while popup is open
+    if (this.hoverHighlight) {
+      this.hoverHighlight.style.display = 'none';
+    }
 
-    this.annotator?.createAnnotation(element, comment);
+    // Get element info
+    const { name: elementName } = identifyElement(target);
+    const rect = target.getBoundingClientRect();
+
+    // Capture text selection if any
+    const selection = window.getSelection();
+    let selectedText: string | undefined;
+    if (selection && selection.toString().trim().length > 0) {
+      selectedText = selection.toString().trim().slice(0, 500);
+    }
+
+    // Position popup near click
+    const popupX = Math.min(rect.left, window.innerWidth - 420);
+    const popupY = rect.bottom + 10;
+
+    this.currentPopup = new AnnotationPopup({
+      element: elementName,
+      selectedText,
+      placeholder: 'What should change?',
+      submitLabel: 'Add',
+      position: { x: popupX, y: popupY },
+      accentColor: this.settings.annotationColor,
+      onSubmit: (comment: string) => {
+        this.annotator?.createAnnotation(target, comment);
+        this.currentPopup = null;
+        if (this.hoverHighlight) {
+          this.hoverHighlight.style.display = 'block';
+        }
+      },
+      onCancel: () => {
+        this.currentPopup = null;
+        if (this.hoverHighlight) {
+          this.hoverHighlight.style.display = 'block';
+        }
+      },
+    });
+  }
+
+  private injectCursorStyles(): void {
+    const style = document.createElement('style');
+    style.id = 'agentation-cursor-styles';
+    style.textContent = `
+      body * {
+        cursor: crosshair !important;
+      }
+      body p, body span, body h1, body h2, body h3, body h4, body h5, body h6,
+      body li, body td, body th, body label, body blockquote, body figcaption,
+      body caption, body legend, body dt, body dd, body pre, body code,
+      body em, body strong, body b, body i, body u, body s, body a,
+      body time, body address, body cite, body q, body abbr, body dfn,
+      body mark, body small, body sub, body sup, body [contenteditable],
+      body p *, body span *, body h1 *, body h2 *, body h3 *, body h4 *,
+      body h5 *, body h6 *, body li *, body a *, body label *, body pre *,
+      body code *, body blockquote *, body [contenteditable] * {
+        cursor: text !important;
+      }
+      .agentation-toolbar, .agentation-toolbar *, .agentation-toggle-button, .agentation-toggle-button * {
+        cursor: default !important;
+      }
+      .agentation-marker, .agentation-marker *, .agentation-annotation-popup, .agentation-annotation-popup * {
+        cursor: default !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  private removeCursorStyles(): void {
+    const style = document.getElementById('agentation-cursor-styles');
+    if (style) {
+      style.remove();
+    }
+  }
+
+  private enableHoverHighlight(): void {
+    // Create hover highlight element
+    this.hoverHighlight = document.createElement('div');
+    this.hoverHighlight.className = 'agentation-hover-highlight';
+    Object.assign(this.hoverHighlight.style, {
+      position: 'fixed',
+      border: '2px solid rgba(60, 130, 247, 0.5)',
+      borderRadius: '4px',
+      pointerEvents: 'none',
+      background: 'rgba(60, 130, 247, 0.04)',
+      boxSizing: 'border-box',
+      zIndex: '999998',
+      display: 'none',
+      transition: 'opacity 0.12s ease-out',
+    });
+    document.body.appendChild(this.hoverHighlight);
+
+    this.mouseMoveHandler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+
+      // Hide highlight when over toolbar or markers or popup
+      if (
+        target.closest('.agentation-toolbar') ||
+        target.closest('.agentation-marker') ||
+        target.closest('.agentation-annotation-popup') ||
+        target.closest('#agent-feedback-host')
+      ) {
+        if (this.hoverHighlight) {
+          this.hoverHighlight.style.display = 'none';
+        }
+        return;
+      }
+
+      // Don't show highlight if popup is open
+      if (this.currentPopup) {
+        if (this.hoverHighlight) {
+          this.hoverHighlight.style.display = 'none';
+        }
+        return;
+      }
+
+      // Update highlight position
+      const rect = target.getBoundingClientRect();
+      if (this.hoverHighlight && rect.width > 0 && rect.height > 0) {
+        this.hoverHighlight.style.display = 'block';
+        this.hoverHighlight.style.left = `${rect.left}px`;
+        this.hoverHighlight.style.top = `${rect.top}px`;
+        this.hoverHighlight.style.width = `${rect.width}px`;
+        this.hoverHighlight.style.height = `${rect.height}px`;
+      }
+    };
+
+    document.addEventListener('mousemove', this.mouseMoveHandler);
   }
 
   public destroy(): void {
