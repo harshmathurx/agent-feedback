@@ -1,0 +1,9 @@
+// Shadow DOM host styles - ensures clean slate
+:host {
+  all: initial;
+  display: contents;
+}
+
+* {
+  box-sizing: border-box;
+}
