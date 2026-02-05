@@ -433,12 +433,18 @@ export class Toolbar {
     this.clickHandler = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
 
-      // Ignore clicks on toolbar and markers
+      // Ignore clicks on toolbar, markers, and popup
       if (
         target.closest('.agentation-toolbar') ||
         target.closest('.agentation-marker') ||
+        target.closest('.agentation-annotation-popup') ||
         target.closest('#agent-feedback-host')
       ) {
+        return;
+      }
+
+      // Don't create new popup if one is already open
+      if (this.currentPopup) {
         return;
       }
 

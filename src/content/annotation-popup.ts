@@ -86,7 +86,10 @@ export class AnnotationPopup {
       closeBtn.style.background = 'transparent';
       closeBtn.style.color = 'rgba(255, 255, 255, 0.5)';
     });
-    closeBtn.addEventListener('click', () => this.cancel());
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.cancel();
+    });
 
     header.appendChild(elementName);
     header.appendChild(closeBtn);
@@ -185,7 +188,10 @@ export class AnnotationPopup {
       cancelBtn.style.color = 'rgba(255, 255, 255, 0.7)';
       cancelBtn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
     });
-    cancelBtn.addEventListener('click', () => this.cancel());
+    cancelBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.cancel();
+    });
 
     const submitBtn = document.createElement('button');
     submitBtn.textContent = this.options.submitLabel || 'Add';
@@ -212,11 +218,19 @@ export class AnnotationPopup {
     submitBtn.addEventListener('mouseup', () => {
       submitBtn.style.transform = 'scale(1)';
     });
-    submitBtn.addEventListener('click', () => this.submit());
+    submitBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.submit();
+    });
 
     buttonsDiv.appendChild(cancelBtn);
     buttonsDiv.appendChild(submitBtn);
     popup.appendChild(buttonsDiv);
+
+    // Stop all click events from bubbling to document
+    popup.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
 
     // Animate in after a frame
     requestAnimationFrame(() => {
