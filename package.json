@@ -1,0 +1,22 @@
+{
+  "name": "agent-feedback",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node esbuild.config.js",
+    "watch": "node esbuild.config.js --watch",
+    "clean": "rm -rf build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/chrome": "^0.1.36",
+    "esbuild": "^0.27.2",
+    "esbuild-sass-plugin": "^3.6.0",
+    "sass": "^1.97.3",
+    "typescript": "^5.9.3"
+  }
+}
