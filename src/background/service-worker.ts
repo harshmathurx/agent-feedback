@@ -8,15 +8,6 @@ chrome.action.onClicked.addListener(async (tab) => {
   const newState = !currentState;
   await setExtensionState(newState);
 
-  // Update icon
-  chrome.action.setIcon({
-    path: {
-      16: newState ? 'icons/icon16.png' : 'icons/icon16-inactive.png',
-      48: newState ? 'icons/icon48.png' : 'icons/icon48-inactive.png',
-      128: newState ? 'icons/icon128.png' : 'icons/icon128-inactive.png',
-    },
-  });
-
   // Send message to content script
   chrome.tabs.sendMessage(tab.id, { type: 'TOGGLE_EXTENSION', active: newState });
 });
@@ -33,16 +24,4 @@ chrome.commands.onCommand.addListener(async (command) => {
 
     chrome.tabs.sendMessage(tab.id, { type: 'TOGGLE_EXTENSION', active: newState });
   }
-});
-
-// Initialize icon state on install
-chrome.runtime.onInstalled.addListener(async () => {
-  const state = await getExtensionState();
-  chrome.action.setIcon({
-    path: {
-      16: state ? 'icons/icon16.png' : 'icons/icon16-inactive.png',
-      48: state ? 'icons/icon48.png' : 'icons/icon48-inactive.png',
-      128: state ? 'icons/icon128.png' : 'icons/icon128-inactive.png',
-    },
-  });
 });
